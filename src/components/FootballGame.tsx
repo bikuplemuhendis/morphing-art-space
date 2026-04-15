@@ -18,8 +18,9 @@ const FootballGame = () => {
   const [started, setStarted] = useState(false);
   const grassBladesRef = useRef<{ x: number; h: number; curve: number }[]>([]);
 
-  const GRAVITY = 0.32;
-  const FRICTION = 0.995;
+  const GRAVITY = 0.35;
+  const AIR_FRICTION = 0.985;
+  const GROUND_BOUNCE = 0.6;
   const BALL_RADIUS = 26;
   const CANVAS_H = 450;
   const GROUND_RATIO = 0.82;
@@ -254,7 +255,7 @@ const FootballGame = () => {
       ball.vy += GRAVITY;
       ball.x += ball.vx;
       ball.y += ball.vy;
-      ball.vx *= FRICTION;
+      ball.vx *= AIR_FRICTION;
       ball.rotation += ball.vx * 0.04;
 
       // Ball hits ground = GAME OVER
@@ -384,9 +385,18 @@ const FootballGame = () => {
       scoreRef.current += 1;
       setScore(scoreRef.current);
 
-      const angle = Math.atan2(ball.y - y, ball.x - x);
-      ball.vx += Math.cos(angle) * 3;
-      ball.vy = -(7 + Math.random() * 3);
+      // Direction based on click offset from ball center
+      const dx = ball.x - x;
+      const kickPower = Math.min(Math.abs(dx) / BALL_RADIUS, 1);
+      
+      // Horizontal: proportional to how off-center the click is, with slight random variation
+      ball.vx = dx * 0.15 + (Math.random() - 0.5) * 2;
+      // Cap horizontal speed
+      if (ball.vx > 6) ball.vx = 6;
+      if (ball.vx < -6) ball.vx = -6;
+      
+      // Vertical: strong upward kick
+      ball.vy = -(8 + Math.random() * 3 + kickPower * 2);
       if (ball.vy < -14) ball.vy = -14;
     }
   };
