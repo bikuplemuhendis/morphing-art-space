@@ -206,13 +206,13 @@ const Header = () => {
           <button className="p-2 text-foreground hover:text-primary transition-colors">
             <Search className="w-5 h-5" />
           </button>
-          <Link to="/tasarla" className="hidden lg:flex items-center gap-2 px-3 py-1.5 text-base font-display font-semibold tracking-wide text-primary hover:text-primary/80 transition-colors">
+          <Link to="/tasarla" className="hidden lg:flex items-center gap-2 px-3 py-1.5 text-base font-display font-semibold tracking-wide text-primary hover:text-primary/80 transition-colors uppercase">
             <Palette className="w-5 h-5" />
-            <span>Tasarla</span>
+            <span>TASARLA</span>
           </Link>
-          <Link to="/toplu-siparis" className="hidden lg:flex items-center gap-2 px-3 py-1.5 text-base font-display font-bold tracking-wide text-accent hover:text-accent/80 transition-colors">
+          <Link to="/toplu-siparis" className="hidden lg:flex items-center gap-2 px-3 py-1.5 text-base font-display font-bold tracking-wide text-accent hover:text-accent/80 transition-colors uppercase">
             <Trophy className="w-5 h-5" />
-            <span>Fiyat Hesapla</span>
+            <span>FİYAT HESAPLA</span>
           </Link>
           <Link to="/sepet" className="p-2 text-foreground hover:text-primary transition-colors relative">
             <ShoppingCart className="w-5 h-5" />
