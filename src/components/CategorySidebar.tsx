@@ -6,6 +6,11 @@ import { cn } from "@/lib/utils";
 
 const categoryTree = [
   {
+    key: "yeni-sezon",
+    label: "YENİ SEZON",
+    href: "/magaza/yeni-sezon",
+  },
+  {
     key: "basketbol",
     label: "BASKETBOL",
     href: "/magaza/basketbol",

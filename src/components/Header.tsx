@@ -104,6 +104,7 @@ const megaMenuData: Record<string, MegaMenuEntry> = {
 };
 
 const navLinks = [
+  { label: "YENİ SEZON", href: "/magaza/yeni-sezon" },
   { label: "KALECİ", href: "/magaza/kaleci" },
   { label: "AKSESUAR", href: "/magaza/aksesuar" },
 ];

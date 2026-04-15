@@ -16,6 +16,7 @@ const categoryTitles: Record<string, string> = {
   kaleci: "KALECİ FORMALARI",
   aksesuar: "AKSESUARLAR",
   kulupler: "KULÜP FORMALARI",
+  "yeni-sezon": "YENİ SEZON ÜRÜNLERİ",
 };
 
 type SortOption = "newest" | "price-asc" | "price-desc" | "name-asc" | "name-desc" | "discount";
