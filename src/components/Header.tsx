@@ -107,6 +107,7 @@ const navLinks = [
   { label: "KALECİ", href: "/magaza/kaleci" },
   { label: "AKSESUAR", href: "/magaza/aksesuar" },
   { label: "TASARLA", href: "/tasarla" },
+  { label: "TOPLU SİPARİŞ", href: "/toplu-siparis", highlight: true },
 ];
 
 const Header = () => {
@@ -190,7 +191,13 @@ const Header = () => {
             <Link
               key={link.label}
               to={link.href}
-              className={`font-display text-[17px] tracking-wide transition-colors px-3 py-2 ${link.label === "TASARLA" ? "text-primary hover:text-primary/80" : "text-foreground hover:text-primary"}`}
+              className={`font-display text-[17px] tracking-wide transition-colors px-3 py-2 ${
+                (link as any).highlight
+                  ? "text-accent hover:text-accent/80 font-bold"
+                  : link.label === "TASARLA"
+                  ? "text-primary hover:text-primary/80"
+                  : "text-foreground hover:text-primary"
+              }`}
             >
               {link.label}
             </Link>
