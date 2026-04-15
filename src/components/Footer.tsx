@@ -7,9 +7,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <h3 className="font-display text-3xl tracking-wider mb-4">
-              EGEMEN<span className="text-primary"> SPOR</span>
-            </h3>
+            <img src="/images/logo.webp" alt="Egemen Spor" className="h-14 w-auto mb-4" />
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
               Egemen Spor - Özel tasarım spor formaları. Halı saha, futbol, basketbol ve voleybol formaları.
             </p>

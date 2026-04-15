@@ -87,8 +87,8 @@ const Header = () => {
 
       {/* Main nav */}
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
-        <Link to="/" className="font-display text-3xl tracking-wider text-foreground">
-          EGEMEN<span className="text-primary"> SPOR</span>
+        <Link to="/" className="flex items-center gap-2">
+          <img src="/images/logo.webp" alt="Egemen Spor" className="h-10 w-auto" />
         </Link>
 
         {/* Desktop nav */}
