@@ -113,7 +113,7 @@ const HeroBanner = () => {
               </Button>
             </Link>
             <Link to={slides[current].cta2.href}>
-              <Button size="lg" variant="outline" className="font-display text-base sm:text-lg tracking-wide border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+              <Button size="lg" variant="outline" className="font-display text-base sm:text-lg tracking-wide border-2 border-white text-white bg-black/40 backdrop-blur-sm hover:bg-white hover:text-black">
                 {slides[current].cta2.label}
               </Button>
             </Link>
