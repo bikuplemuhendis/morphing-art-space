@@ -3,12 +3,12 @@ import { Menu, X, Phone, Search, ShoppingCart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  { label: "ANA SAYFA", href: "#" },
-  { label: "FUTBOL", href: "#futbol" },
-  { label: "BASKETBOL", href: "#basketbol" },
-  { label: "VOLEYBOL", href: "#voleybol" },
-  { label: "AKSESUAR", href: "#aksesuar" },
-  { label: "İLETİŞİM", href: "#iletisim" },
+  { label: "ANA SAYFA", href: "/" },
+  { label: "FUTBOL", href: "/#futbol" },
+  { label: "BASKETBOL", href: "/#basketbol" },
+  { label: "VOLEYBOL", href: "/#voleybol" },
+  { label: "HAKKIMIZDA", href: "/hakkimizda" },
+  { label: "İLETİŞİM", href: "/iletisim" },
 ];
 
 const Header = () => {
@@ -30,7 +30,7 @@ const Header = () => {
       {/* Main nav */}
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
         <a href="#" className="font-display text-3xl tracking-wider text-foreground">
-          SÜPER<span className="text-primary">FORMA</span>
+          EGEMEN<span className="text-primary"> SPOR</span>
         </a>
 
         {/* Desktop nav */}
