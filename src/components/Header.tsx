@@ -201,13 +201,18 @@ const Header = () => {
         </nav>
 
         {/* Icons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <button className="p-2 text-foreground hover:text-primary transition-colors">
             <Search className="w-5 h-5" />
           </button>
-          <button className="p-2 text-foreground hover:text-primary transition-colors">
-            <User className="w-5 h-5" />
-          </button>
+          <Link to="/tasarla" className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
+            <Palette className="w-4 h-4" />
+            <span>Tasarla</span>
+          </Link>
+          <Link to="/toplu-siparis" className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold text-accent hover:text-accent/80 transition-colors">
+            <Trophy className="w-4 h-4" />
+            <span>Fiyat Hesapla</span>
+          </Link>
           <Link to="/sepet" className="p-2 text-foreground hover:text-primary transition-colors relative">
             <ShoppingCart className="w-5 h-5" />
             {totalItems > 0 && (
