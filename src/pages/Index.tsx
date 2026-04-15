@@ -5,6 +5,7 @@ import Categories from "@/components/Categories";
 import ProductGrid from "@/components/ProductGrid";
 import BasketballGrid from "@/components/BasketballGrid";
 import CTABanner from "@/components/CTABanner";
+import CollectionShowcase from "@/components/CollectionShowcase";
 import Testimonials from "@/components/Testimonials";
 import BrandsStrip from "@/components/BrandsStrip";
 import StatsSection from "@/components/StatsSection";
@@ -19,6 +20,7 @@ const Index = () => {
       <Features />
       <Categories />
       <ProductGrid />
+      <CollectionShowcase />
       <CTABanner />
       <BasketballGrid />
       <StatsSection />

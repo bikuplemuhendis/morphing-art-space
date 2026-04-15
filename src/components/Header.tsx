@@ -1,23 +1,68 @@
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, Phone, Search, ShoppingCart, User, ChevronDown, Shirt, Trophy, Palette, Star, ArrowRight } from "lucide-react";
+import { Menu, X, Phone, Search, ShoppingCart, User, ChevronDown, Shirt, Trophy, Palette, Star, ArrowRight, Shield, Volleyball, Award } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { Link } from "react-router-dom";
 
-const megaMenuData = {
-  MAĞAZA: {
+interface MegaColumn {
+  title: string;
+  links: { label: string; href: string }[];
+  icon: React.ElementType;
+}
+
+interface MegaMenuEntry {
+  columns: MegaColumn[];
+  featured?: {
+    image: string;
+    title: string;
+    subtitle: string;
+    href: string;
+  };
+}
+
+const megaMenuData: Record<string, MegaMenuEntry> = {
+  FUTBOL: {
     columns: [
       {
-        title: "Futbol",
+        title: "Halı Saha Formaları",
         links: [
           { label: "Tüm Futbol Formaları", href: "/magaza/futbol" },
-          { label: "Halı Saha Formaları", href: "/magaza/futbol" },
+          { label: "Takım Setleri", href: "/magaza/futbol" },
           { label: "Antrenman Formaları", href: "/magaza/futbol" },
-          { label: "Kaleci Formaları", href: "/magaza/futbol" },
         ],
         icon: Shirt,
       },
       {
-        title: "Basketbol",
+        title: "Kulüp Formaları",
+        links: [
+          { label: "Galatasaray Konsept", href: "/magaza/kulupler?club=Galatasaray" },
+          { label: "Fenerbahçe Konsept", href: "/magaza/kulupler?club=Fenerbahçe" },
+          { label: "Beşiktaş Konsept", href: "/magaza/kulupler?club=Beşiktaş" },
+          { label: "Trabzonspor Konsept", href: "/magaza/kulupler?club=Trabzonspor" },
+          { label: "Tüm Kulüpler", href: "/magaza/kulupler" },
+        ],
+        icon: Award,
+      },
+      {
+        title: "Forma Tasarla",
+        links: [
+          { label: "Kendi Formani Tasarla", href: "/tasarla" },
+          { label: "Logo & Baskı Hizmeti", href: "/tasarla" },
+          { label: "Toplu Sipariş", href: "/tasarla" },
+        ],
+        icon: Palette,
+      },
+    ],
+    featured: {
+      image: "/images/hero-banner.png",
+      title: "%50'ye Varan İndirimler",
+      subtitle: "Sezon sonu fırsatları!",
+      href: "/magaza/futbol",
+    },
+  },
+  BASKETBOL: {
+    columns: [
+      {
+        title: "Basketbol Formaları",
         links: [
           { label: "Tüm Basketbol Formaları", href: "/magaza/basketbol" },
           { label: "Maç Formaları", href: "/magaza/basketbol" },
@@ -28,33 +73,46 @@ const megaMenuData = {
       {
         title: "Özel Tasarım",
         links: [
-          { label: "Forma Tasarla", href: "/magaza" },
-          { label: "Takım Setleri", href: "/magaza" },
-          { label: "Logo & Baskı", href: "/magaza" },
+          { label: "Basketbol Forması Tasarla", href: "/tasarla" },
+          { label: "Takım Setleri", href: "/magaza/basketbol" },
         ],
         icon: Palette,
       },
     ],
-    featured: {
-      image: "/images/hero-banner.png",
-      title: "%50'ye Varan İndirimler",
-      subtitle: "Sezon sonu fırsatlarını kaçırma!",
-      href: "/magaza",
-    },
+  },
+  VOLEYBOL: {
+    columns: [
+      {
+        title: "Voleybol Formaları",
+        links: [
+          { label: "Tüm Voleybol Formaları", href: "/magaza/voleybol" },
+          { label: "Kadın Formaları", href: "/magaza/voleybol" },
+          { label: "Erkek Formaları", href: "/magaza/voleybol" },
+        ],
+        icon: Volleyball,
+      },
+      {
+        title: "Özel Tasarım",
+        links: [
+          { label: "Voleybol Forması Tasarla", href: "/tasarla" },
+          { label: "Takım Setleri", href: "/magaza/voleybol" },
+        ],
+        icon: Palette,
+      },
+    ],
   },
 };
 
-const simpleLinks = [
-  { label: "ANA SAYFA", href: "/" },
-  { label: "HAKKIMIZDA", href: "/hakkimizda" },
-  { label: "İLETİŞİM", href: "/iletisim" },
+const navLinks = [
+  { label: "KALECİ", href: "/magaza/kaleci" },
+  { label: "AKSESUAR", href: "/magaza/aksesuar" },
+  { label: "TASARLA", href: "/tasarla" },
 ];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeMega, setActiveMega] = useState<string | null>(null);
   const { totalItems } = useCart();
-  const megaRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const handleMouseEnter = (key: string) => {
@@ -87,21 +145,15 @@ const Header = () => {
 
       {/* Main nav */}
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 shrink-0">
           <img src="/images/logo.webp" alt="Egemen Spor" className="h-10 w-auto" />
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-1">
-          {simpleLinks.slice(0, 1).map((link) => (
-            <Link
-              key={link.label}
-              to={link.href}
-              className="font-display text-lg tracking-wide text-foreground hover:text-primary transition-colors px-4 py-2"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="hidden lg:flex items-center gap-0.5">
+          <Link to="/" className="font-display text-[17px] tracking-wide text-foreground hover:text-primary transition-colors px-3 py-2">
+            ANA SAYFA
+          </Link>
 
           {/* Mega menu triggers */}
           {Object.entries(megaMenuData).map(([key]) => (
@@ -111,18 +163,18 @@ const Header = () => {
               onMouseEnter={() => handleMouseEnter(key)}
               onMouseLeave={handleMouseLeave}
             >
-              <button className={`font-display text-lg tracking-wide transition-colors px-4 py-2 flex items-center gap-1 ${activeMega === key ? "text-primary" : "text-foreground hover:text-primary"}`}>
+              <button className={`font-display text-[17px] tracking-wide transition-colors px-3 py-2 flex items-center gap-1 ${activeMega === key ? "text-primary" : "text-foreground hover:text-primary"}`}>
                 {key}
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeMega === key ? "rotate-180" : ""}`} />
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeMega === key ? "rotate-180" : ""}`} />
               </button>
             </div>
           ))}
 
-          {simpleLinks.slice(1).map((link) => (
+          {navLinks.map((link) => (
             <Link
               key={link.label}
               to={link.href}
-              className="font-display text-lg tracking-wide text-foreground hover:text-primary transition-colors px-4 py-2"
+              className={`font-display text-[17px] tracking-wide transition-colors px-3 py-2 ${link.label === "TASARLA" ? "text-primary hover:text-primary/80" : "text-foreground hover:text-primary"}`}
             >
               {link.label}
             </Link>
@@ -130,7 +182,7 @@ const Header = () => {
         </nav>
 
         {/* Icons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button className="p-2 text-foreground hover:text-primary transition-colors">
             <Search className="w-5 h-5" />
           </button>
@@ -155,16 +207,15 @@ const Header = () => {
       </div>
 
       {/* Desktop Mega Menu Dropdown */}
-      {activeMega && megaMenuData[activeMega as keyof typeof megaMenuData] && (
+      {activeMega && megaMenuData[activeMega] && (
         <div
-          ref={megaRef}
           className="hidden lg:block absolute left-0 right-0 bg-card border-b border-border shadow-2xl z-50 animate-fade-in"
           onMouseEnter={() => handleMouseEnter(activeMega)}
           onMouseLeave={handleMouseLeave}
         >
           <div className="container mx-auto px-4 py-8">
-            <div className="grid grid-cols-4 gap-8">
-              {megaMenuData[activeMega as keyof typeof megaMenuData].columns.map((col, i) => (
+            <div className={`grid gap-8 ${megaMenuData[activeMega].featured ? `grid-cols-${megaMenuData[activeMega].columns.length + 1}` : `grid-cols-${megaMenuData[activeMega].columns.length}`}`} style={{ gridTemplateColumns: megaMenuData[activeMega].featured ? `repeat(${megaMenuData[activeMega].columns.length}, 1fr) 1fr` : `repeat(${megaMenuData[activeMega].columns.length}, 1fr)` }}>
+              {megaMenuData[activeMega].columns.map((col, i) => (
                 <div key={i}>
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -190,14 +241,14 @@ const Header = () => {
               ))}
 
               {/* Featured card */}
-              {megaMenuData[activeMega as keyof typeof megaMenuData].featured && (
+              {megaMenuData[activeMega].featured && (
                 <Link
-                  to={megaMenuData[activeMega as keyof typeof megaMenuData].featured.href}
+                  to={megaMenuData[activeMega].featured!.href}
                   onClick={() => setActiveMega(null)}
-                  className="relative rounded-xl overflow-hidden group"
+                  className="relative rounded-xl overflow-hidden group min-h-[180px]"
                 >
                   <img
-                    src={megaMenuData[activeMega as keyof typeof megaMenuData].featured.image}
+                    src={megaMenuData[activeMega].featured!.image}
                     alt="Featured"
                     className="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-500"
                   />
@@ -206,10 +257,10 @@ const Header = () => {
                       <Star className="w-3 h-3" /> Öne Çıkan
                     </p>
                     <h4 className="font-display text-2xl text-white mt-1">
-                      {megaMenuData[activeMega as keyof typeof megaMenuData].featured.title}
+                      {megaMenuData[activeMega].featured!.title}
                     </h4>
                     <p className="text-white/70 text-sm">
-                      {megaMenuData[activeMega as keyof typeof megaMenuData].featured.subtitle}
+                      {megaMenuData[activeMega].featured!.subtitle}
                     </p>
                   </div>
                 </Link>
@@ -261,16 +312,23 @@ const Header = () => {
               </div>
             ))}
 
-            {simpleLinks.slice(1).map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.href}
-                className="font-display text-xl tracking-wide text-foreground hover:text-primary py-2"
+                className={`font-display text-xl tracking-wide py-2 ${link.label === "TASARLA" ? "text-primary" : "text-foreground hover:text-primary"}`}
                 onClick={() => setMenuOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
+
+            <Link to="/hakkimizda" className="font-display text-xl tracking-wide text-foreground hover:text-primary py-2" onClick={() => setMenuOpen(false)}>
+              HAKKIMIZDA
+            </Link>
+            <Link to="/iletisim" className="font-display text-xl tracking-wide text-foreground hover:text-primary py-2" onClick={() => setMenuOpen(false)}>
+              İLETİŞİM
+            </Link>
           </nav>
         </div>
       )}
