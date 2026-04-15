@@ -3,21 +3,21 @@ import { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const clubs = [
-  { name: "Galatasaray", colors: ["#FDB913", "#C8102E"], initials: "GS" },
-  { name: "Fenerbahçe", colors: ["#FFED00", "#00296B"], initials: "FB" },
-  { name: "Beşiktaş", colors: ["#000000", "#FFFFFF"], initials: "BJK" },
-  { name: "Trabzonspor", colors: ["#6B1D2A", "#003DA5"], initials: "TS" },
-  { name: "Bursaspor", colors: ["#006B3F", "#FFFFFF"], initials: "BRS" },
-  { name: "Antalyaspor", colors: ["#C8102E", "#FFFFFF"], initials: "ANT" },
-  { name: "Konyaspor", colors: ["#006B3F", "#FFFFFF"], initials: "KON" },
-  { name: "Sivasspor", colors: ["#C8102E", "#003DA5"], initials: "SVS" },
-  { name: "Kasımpaşa", colors: ["#003DA5", "#FFFFFF"], initials: "KAS" },
-  { name: "Rizespor", colors: ["#003DA5", "#006B3F"], initials: "RZS" },
-  { name: "Samsunspor", colors: ["#C8102E", "#FFFFFF"], initials: "SAM" },
-  { name: "Adana Demirspor", colors: ["#005DAA", "#FFFFFF"], initials: "ADS" },
-  { name: "Başakşehir", colors: ["#F26522", "#1A2B5F"], initials: "IBB" },
-  { name: "Hatayspor", colors: ["#C8102E", "#006B3F"], initials: "HTY" },
-  { name: "Kayserispor", colors: ["#FDB913", "#C8102E"], initials: "KYS" },
+  { name: "Real Madrid", colors: ["#FEBE10", "#00529F"], initials: "RM" },
+  { name: "Barcelona", colors: ["#A50044", "#004D98"], initials: "FCB" },
+  { name: "Manchester United", colors: ["#DA291C", "#FBE122"], initials: "MU" },
+  { name: "Liverpool", colors: ["#C8102E", "#00B2A9"], initials: "LFC" },
+  { name: "Bayern München", colors: ["#DC052D", "#0066B2"], initials: "FCB" },
+  { name: "Juventus", colors: ["#000000", "#FFFFFF"], initials: "JUV" },
+  { name: "PSG", colors: ["#004170", "#DA291C"], initials: "PSG" },
+  { name: "Manchester City", colors: ["#6CABDD", "#1C2C5B"], initials: "MC" },
+  { name: "AC Milan", colors: ["#FB090B", "#000000"], initials: "ACM" },
+  { name: "Inter Milan", colors: ["#010E80", "#000000"], initials: "INT" },
+  { name: "Chelsea", colors: ["#034694", "#DBA111"], initials: "CFC" },
+  { name: "Arsenal", colors: ["#EF0107", "#063672"], initials: "ARS" },
+  { name: "Borussia Dortmund", colors: ["#FDE100", "#000000"], initials: "BVB" },
+  { name: "Atletico Madrid", colors: ["#CB3524", "#272E61"], initials: "ATM" },
+  { name: "Ajax", colors: ["#D2122E", "#FFFFFF"], initials: "AJX" },
 ];
 
 const ClubsShowcase = () => {
@@ -54,8 +54,8 @@ const ClubsShowcase = () => {
   return (
     <section className="py-14">
       <div className="text-center mb-10">
-        <h2 className="font-display text-4xl sm:text-5xl text-foreground mb-2">Kulüplerimiz</h2>
-        <p className="text-muted-foreground">Türkiye'nin önde gelen kulüplerine hizmet veriyoruz</p>
+        <h2 className="font-display text-4xl sm:text-5xl text-foreground mb-2">Kulüpler</h2>
+        <p className="text-muted-foreground">Dünyanın en büyük kulüplerinin konsept formalarını üretiyoruz</p>
       </div>
 
       <div className="container mx-auto px-4 relative">
