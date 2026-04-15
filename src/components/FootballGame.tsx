@@ -105,97 +105,109 @@ const FootballGame = () => {
 
     const R = BALL_RADIUS;
 
-    // Base ball body
+    // Base white ball with 3D gradient
     ctx.beginPath();
     ctx.arc(0, 0, R, 0, Math.PI * 2);
-    const ballGrad = ctx.createRadialGradient(-R * 0.25, -R * 0.3, R * 0.08, 0, 0, R);
+    const ballGrad = ctx.createRadialGradient(-R * 0.3, -R * 0.3, R * 0.05, R * 0.1, R * 0.1, R * 1.1);
     ballGrad.addColorStop(0, "#ffffff");
-    ballGrad.addColorStop(0.3, "#f8f8f8");
-    ballGrad.addColorStop(0.65, "#ececec");
-    ballGrad.addColorStop(1, "#c4c4c4");
+    ballGrad.addColorStop(0.4, "#f5f5f5");
+    ballGrad.addColorStop(0.7, "#e8e8e8");
+    ballGrad.addColorStop(1, "#b0b0b0");
     ctx.fillStyle = ballGrad;
     ctx.fill();
 
-    // Clip to ball circle
+    // Clip to ball
     ctx.save();
     ctx.beginPath();
     ctx.arc(0, 0, R, 0, Math.PI * 2);
     ctx.clip();
 
-    // Modern thermal-bonded panels (like Adidas Al Rihla / Nike Flight)
-    const panelColors = ["#C8102E", "#1a1a2e", "#C8102E", "#1a1a2e", "#C8102E", "#1a1a2e"];
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI * 2 * i) / 6;
+    // Classic pentagon pattern - black pentagons with dark gray seams
+    // Draw 1 center pentagon + 5 surrounding pentagons
+    const drawPentagon = (cx: number, cy: number, size: number) => {
       ctx.beginPath();
-      const a1 = angle - 0.42;
-      const a2 = angle + 0.42;
-      ctx.moveTo(0, 0);
-      ctx.quadraticCurveTo(
-        Math.cos(a1) * R * 1.1, Math.sin(a1) * R * 1.1,
-        Math.cos(angle - 0.22) * R, Math.sin(angle - 0.22) * R
-      );
-      ctx.lineTo(Math.cos(angle + 0.22) * R, Math.sin(angle + 0.22) * R);
-      ctx.quadraticCurveTo(
-        Math.cos(a2) * R * 1.1, Math.sin(a2) * R * 1.1,
-        0, 0
-      );
+      for (let i = 0; i < 5; i++) {
+        const a = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+        const px = cx + Math.cos(a) * size;
+        const py = cy + Math.sin(a) * size;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
       ctx.closePath();
-      ctx.fillStyle = panelColors[i];
-      ctx.globalAlpha = 0.65;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    }
+    };
 
-    // Panel seams — gold metallic
-    ctx.strokeStyle = "rgba(218, 165, 32, 0.55)";
-    ctx.lineWidth = 1.2;
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI * 2 * i) / 6;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      const cpX = Math.cos(angle + 0.12) * R * 0.6;
-      const cpY = Math.sin(angle + 0.12) * R * 0.6;
-      ctx.quadraticCurveTo(cpX, cpY, Math.cos(angle) * R, Math.sin(angle) * R);
+    const pentSize = R * 0.32;
+
+    // Center pentagon (black)
+    drawPentagon(0, 0, pentSize);
+    ctx.fillStyle = "#2a2a2a";
+    ctx.fill();
+    ctx.strokeStyle = "#444";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // 5 surrounding pentagons
+    const surroundDist = R * 0.68;
+    for (let i = 0; i < 5; i++) {
+      const a = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+      const px = Math.cos(a) * surroundDist;
+      const py = Math.sin(a) * surroundDist;
+      drawPentagon(px, py, pentSize * 0.85);
+      ctx.fillStyle = "#2a2a2a";
+      ctx.fill();
+      ctx.strokeStyle = "#444";
+      ctx.lineWidth = 1.5;
       ctx.stroke();
     }
 
-    // Outer ring seam
-    ctx.beginPath();
-    ctx.arc(0, 0, R * 0.72, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(218, 165, 32, 0.25)";
-    ctx.lineWidth = 0.8;
-    ctx.stroke();
+    // Seam lines connecting pentagons (white hexagon edges)
+    ctx.strokeStyle = "#555";
+    ctx.lineWidth = 1.8;
+    for (let i = 0; i < 5; i++) {
+      const a1 = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+      const a2 = (Math.PI * 2 * ((i + 1) % 5)) / 5 - Math.PI / 2;
+      // Connect center pentagon vertex to surrounding pentagon
+      const vx = Math.cos(a1) * pentSize;
+      const vy = Math.sin(a1) * pentSize;
+      const sx = Math.cos(a1) * surroundDist;
+      const sy = Math.sin(a1) * surroundDist;
+      ctx.beginPath();
+      ctx.moveTo(vx, vy);
+      ctx.lineTo(sx - Math.cos(a1) * pentSize * 0.85, sy - Math.sin(a1) * pentSize * 0.85);
+      ctx.stroke();
 
-    // Center accent circle
-    ctx.beginPath();
-    ctx.arc(0, 0, R * 0.16, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(200, 16, 46, 0.45)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(218, 165, 32, 0.6)";
-    ctx.lineWidth = 0.8;
-    ctx.stroke();
+      // Connect adjacent surrounding pentagons
+      const s2x = Math.cos(a2) * surroundDist;
+      const s2y = Math.sin(a2) * surroundDist;
+      const midA = (a1 + a2) / 2;
+      ctx.beginPath();
+      ctx.moveTo(sx + Math.cos(midA + Math.PI) * pentSize * 0.6, sy + Math.sin(midA + Math.PI) * pentSize * 0.6);
+      ctx.lineTo(s2x + Math.cos(midA + Math.PI) * pentSize * 0.6, s2y + Math.sin(midA + Math.PI) * pentSize * 0.6);
+      ctx.stroke();
+    }
 
     ctx.restore(); // unclip
 
-    // Ball outline
+    // Ball outline - subtle dark edge
     ctx.beginPath();
     ctx.arc(0, 0, R, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(80,80,80,0.3)";
-    ctx.lineWidth = 0.8;
+    ctx.strokeStyle = "rgba(60,60,60,0.35)";
+    ctx.lineWidth = 1.2;
     ctx.stroke();
 
-    // Specular highlight
+    // 3D specular highlight (top-left)
     ctx.beginPath();
-    ctx.arc(-R * 0.28, -R * 0.32, R * 0.2, 0, Math.PI * 2);
-    const specGrad = ctx.createRadialGradient(-R * 0.28, -R * 0.32, 0, -R * 0.28, -R * 0.32, R * 0.2);
-    specGrad.addColorStop(0, "rgba(255,255,255,0.75)");
+    ctx.arc(-R * 0.28, -R * 0.3, R * 0.28, 0, Math.PI * 2);
+    const specGrad = ctx.createRadialGradient(-R * 0.28, -R * 0.3, 0, -R * 0.28, -R * 0.3, R * 0.28);
+    specGrad.addColorStop(0, "rgba(255,255,255,0.85)");
+    specGrad.addColorStop(0.5, "rgba(255,255,255,0.25)");
     specGrad.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = specGrad;
     ctx.fill();
 
-    // Small sharp highlight
+    // Sharp highlight dot
     ctx.beginPath();
-    ctx.arc(-R * 0.15, -R * 0.2, R * 0.06, 0, Math.PI * 2);
+    ctx.arc(-R * 0.18, -R * 0.22, R * 0.06, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255,255,255,0.95)";
     ctx.fill();
 
