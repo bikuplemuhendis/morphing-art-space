@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -51,8 +51,8 @@
     --sale-badge: 0 72% 51%;
     --whatsapp: 142 70% 40%;
 
-    --font-display: 'Bebas Neue', sans-serif;
-    --font-body: 'Barlow', sans-serif;
+    --font-display: 'Teko', sans-serif;
+    --font-body: 'Montserrat', sans-serif;
 
     --gradient-hero: linear-gradient(135deg, hsl(0 72% 51%) 0%, hsl(38 92% 50%) 100%);
     --gradient-dark: linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 20% 18%) 100%);
