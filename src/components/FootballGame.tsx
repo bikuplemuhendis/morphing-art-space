@@ -18,8 +18,9 @@ const FootballGame = () => {
   const [started, setStarted] = useState(false);
   const grassBladesRef = useRef<{ x: number; h: number; curve: number }[]>([]);
 
-  const GRAVITY = 0.32;
-  const FRICTION = 0.995;
+  const GRAVITY = 0.35;
+  const AIR_FRICTION = 0.985;
+  const GROUND_BOUNCE = 0.6;
   const BALL_RADIUS = 26;
   const CANVAS_H = 450;
   const GROUND_RATIO = 0.82;
