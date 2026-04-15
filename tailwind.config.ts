@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Teko", "sans-serif"],
-        body: ["Montserrat", "sans-serif"],
+        display: ["Oswald", "sans-serif"],
+        body: ["Roboto", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
