@@ -5,7 +5,7 @@ export interface Product {
   originalPrice: number;
   salePrice: number;
   discount: number;
-  category: "futbol" | "basketbol" | "voleybol" | "kaleci" | "aksesuar" | "kulupler";
+  category: "futbol" | "basketbol" | "voleybol" | "kaleci" | "aksesuar" | "kulupler" | "yeni-sezon";
   club?: string;
   description: string;
   details: string[];
