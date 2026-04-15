@@ -62,7 +62,7 @@ const Footer = () => {
             <ul className="space-y-3.5 text-sm text-primary-foreground/70">
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-                0531 242 7762
+                +90 542 383 38 60
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-primary flex-shrink-0" />
@@ -70,7 +70,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                <span>Merter, Güngören<br />İstanbul, Türkiye</span>
+                <span>Nuripaşa Mah. 15 Sokak<br />No:29/A Zeytinburnu / İstanbul</span>
               </li>
             </ul>
             <div className="mt-6 p-3 rounded-lg bg-primary-foreground/5 border border-primary-foreground/10">
