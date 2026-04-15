@@ -8,10 +8,10 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <h3 className="font-display text-3xl tracking-wider mb-4">
-              SÜPER<span className="text-primary">FORMA</span>
+              EGEMEN<span className="text-primary"> SPOR</span>
             </h3>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
-              Özel tasarım spor formaları. Halı saha, futbol, basketbol ve voleybol formaları.
+              Egemen Spor - Özel tasarım spor formaları. Halı saha, futbol, basketbol ve voleybol formaları.
             </p>
           </div>
 
@@ -47,7 +47,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary" />
-                info@superforma.net
+                info@egemenspor.com
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-primary mt-0.5" />
@@ -58,7 +58,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-primary-foreground/10 mt-10 pt-6 text-center text-sm text-primary-foreground/50">
-          © 2026 SüperForma. Tüm hakları saklıdır.
+          © 2026 Egemen Spor. Tüm hakları saklıdır.
         </div>
       </div>
     </footer>
