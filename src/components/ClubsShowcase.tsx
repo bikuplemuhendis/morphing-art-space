@@ -54,8 +54,8 @@ const ClubsShowcase = () => {
   return (
     <section className="py-14">
       <div className="text-center mb-10">
-        <h2 className="font-display text-4xl sm:text-5xl text-foreground mb-2">Kulüplerimiz</h2>
-        <p className="text-muted-foreground">Türkiye'nin önde gelen kulüplerine hizmet veriyoruz</p>
+        <h2 className="font-display text-4xl sm:text-5xl text-foreground mb-2">Kulüpler</h2>
+        <p className="text-muted-foreground">Dünyanın en büyük kulüplerinin konsept formalarını üretiyoruz</p>
       </div>
 
       <div className="container mx-auto px-4 relative">
