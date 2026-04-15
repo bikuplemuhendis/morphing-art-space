@@ -10,6 +10,7 @@ import Contact from "./pages/Contact";
 import Store from "./pages/Store";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import DesignJersey from "./pages/DesignJersey";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/magaza/:category" element={<Store />} />
             <Route path="/urun/:id" element={<ProductDetail />} />
             <Route path="/sepet" element={<Cart />} />
+            <Route path="/tasarla" element={<DesignJersey />} />
             <Route path="/hakkimizda" element={<About />} />
             <Route path="/iletisim" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
