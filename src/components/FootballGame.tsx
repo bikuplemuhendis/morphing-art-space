@@ -336,25 +336,31 @@ const FootballGame = () => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const ball = ballRef.current;
-    const dist = Math.sqrt((x - ball.x) ** 2 + (y - ball.y) ** 2);
 
-    // If game over, restart on any click
+    // If game over, restart immediately with a new kick
     if (gameOver) {
-      setGameOver(false);
-      scoreRef.current = 0;
-      setScore(0);
-      ball.x = canvas.width / (window.devicePixelRatio || 1) / 2;
-      ball.y = CANVAS_H * GROUND_RATIO - BALL_RADIUS;
+      const centerX = canvas.width / (window.devicePixelRatio || 1) / 2;
+      const groundPos = CANVAS_H * GROUND_RATIO - BALL_RADIUS;
+      ball.x = centerX;
+      ball.y = groundPos;
       ball.vx = 0;
       ball.vy = 0;
       ball.rotation = 0;
-      ball.onGround = true;
+      ball.onGround = false;
+      ball.active = true;
+      scoreRef.current = 1;
+      setScore(1);
+      setGameOver(false);
+      setStarted(true);
+      ball.vy = -(8 + Math.random() * 3);
+      ball.vx = (Math.random() - 0.5) * 4;
       return;
     }
 
+    const dist = Math.sqrt((x - ball.x) ** 2 + (y - ball.y) ** 2);
+
     if (dist < BALL_RADIUS + 25) {
       if (!ball.active) {
-        // First kick - launch the ball
         ball.active = true;
         ball.onGround = false;
         setStarted(true);
@@ -366,11 +372,9 @@ const FootballGame = () => {
       scoreRef.current += 1;
       setScore(scoreRef.current);
 
-      // Kick upward with slight direction
       const angle = Math.atan2(ball.y - y, ball.x - x);
       ball.vx += Math.cos(angle) * 3;
-      ball.vy = -(7 + Math.random() * 3); // Always kick up
-      // Clamp max upward velocity
+      ball.vy = -(7 + Math.random() * 3);
       if (ball.vy < -14) ball.vy = -14;
     }
   };
@@ -391,21 +395,22 @@ const FootballGame = () => {
           </div>
           {started && (
             <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-1.5">
-              <p className="text-white font-display text-2xl">{score} <span className="text-sm text-white/60">vuruş</span></p>
+              <p className="text-white font-display text-2xl">{score} <span className="text-sm text-white/60">skor</span></p>
             </div>
           )}
         </div>
 
         {/* Game over overlay */}
         {gameOver && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm cursor-pointer">
             <div className="text-center">
               <p className="font-display text-5xl text-white mb-2">OYUN BİTTİ!</p>
-              <p className="font-display text-3xl text-primary">{scoreRef.current} VURUŞ</p>
+              <p className="font-display text-4xl text-primary mb-1">{scoreRef.current} SKOR</p>
+              <p className="text-white/70 text-sm">🏆 En Yüksek Skor: <span className="text-yellow-400 font-bold text-base">{Math.max(highScore, scoreRef.current)}</span></p>
               {scoreRef.current >= highScore && scoreRef.current > 0 && (
-                <p className="text-yellow-400 font-semibold mt-1 text-sm">🏆 YENİ REKOR!</p>
+                <p className="text-yellow-400 font-bold mt-2 text-lg animate-pulse">🎉 YENİ REKOR!</p>
               )}
-              <p className="text-white/60 text-sm mt-4">Tekrar oynamak için tıkla</p>
+              <p className="text-white/50 text-sm mt-5 border border-white/20 rounded-full px-4 py-1.5 inline-block">Tekrar oynamak için tıkla</p>
             </div>
           </div>
         )}
