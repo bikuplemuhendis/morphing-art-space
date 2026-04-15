@@ -2,19 +2,27 @@ import { useState, useRef, useCallback, useEffect } from "react";
 
 const FootballGame = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ballRef = useRef({ x: 0, y: 0, vx: 0, vy: 0, bouncing: false, rotation: 0 });
+  const ballRef = useRef({ x: 0, y: 0, vx: 0, vy: 0, active: false, rotation: 0, onGround: true });
   const animRef = useRef<number>(0);
   const scoreRef = useRef(0);
-  const [bouncing, setBouncing] = useState(false);
+  const highScoreRef = useRef(() => {
+    const saved = localStorage.getItem("footballHighScore");
+    return saved ? parseInt(saved, 10) : 0;
+  });
   const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem("footballHighScore");
+    return saved ? parseInt(saved, 10) : 0;
+  });
+  const [gameOver, setGameOver] = useState(false);
+  const [started, setStarted] = useState(false);
   const grassBladesRef = useRef<{ x: number; h: number; curve: number }[]>([]);
 
-  const GRAVITY = 0.35;
-  const BOUNCE_DAMPING = 0.72;
+  const GRAVITY = 0.32;
   const FRICTION = 0.995;
   const BALL_RADIUS = 26;
   const CANVAS_H = 450;
-  const GROUND_RATIO = 0.82; // ground line at 82% — more sky, less grass
+  const GROUND_RATIO = 0.82;
 
   const initGrass = useCallback((w: number) => {
     const blades: { x: number; h: number; curve: number }[] = [];
@@ -31,7 +39,6 @@ const FootballGame = () => {
   const drawScene = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number, time: number) => {
     const groundY = h * GROUND_RATIO;
 
-    // Sky
     const skyGrad = ctx.createLinearGradient(0, 0, 0, groundY);
     skyGrad.addColorStop(0, "#0a1e0a");
     skyGrad.addColorStop(0.5, "#132e13");
@@ -39,19 +46,12 @@ const FootballGame = () => {
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, w, groundY);
 
-    // Stadium lights glow
     const glowGrad = ctx.createRadialGradient(w * 0.2, 0, 0, w * 0.2, 0, h * 0.5);
     glowGrad.addColorStop(0, "rgba(255,255,200,0.06)");
     glowGrad.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = glowGrad;
     ctx.fillRect(0, 0, w, groundY);
-    const glowGrad2 = ctx.createRadialGradient(w * 0.8, 0, 0, w * 0.8, 0, h * 0.5);
-    glowGrad2.addColorStop(0, "rgba(255,255,200,0.06)");
-    glowGrad2.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = glowGrad2;
-    ctx.fillRect(0, 0, w, groundY);
 
-    // Ground
     const grassGrad = ctx.createLinearGradient(0, groundY, 0, h);
     grassGrad.addColorStop(0, "#2e7d32");
     grassGrad.addColorStop(0.3, "#388e3c");
@@ -60,14 +60,12 @@ const FootballGame = () => {
     ctx.fillStyle = grassGrad;
     ctx.fillRect(0, groundY, w, h - groundY);
 
-    // Mowing stripes
     const stripeW = 60;
     for (let sx = 0; sx < w; sx += stripeW * 2) {
       ctx.fillStyle = "rgba(255,255,255,0.04)";
       ctx.fillRect(sx, groundY, stripeW, h - groundY);
     }
 
-    // Field line
     ctx.strokeStyle = "rgba(255,255,255,0.2)";
     ctx.lineWidth = 2.5;
     ctx.beginPath();
@@ -75,7 +73,6 @@ const FootballGame = () => {
     ctx.lineTo(w, groundY + 2);
     ctx.stroke();
 
-    // Grass blades
     const blades = grassBladesRef.current;
     for (let i = 0; i < blades.length; i++) {
       const b = blades[i];
@@ -91,7 +88,6 @@ const FootballGame = () => {
   }, []);
 
   const drawBall = useCallback((ctx: CanvasRenderingContext2D, x: number, y: number, rotation: number, groundY: number) => {
-    // Shadow
     ctx.save();
     const shadowScale = Math.max(0.3, 1 - (groundY - y - BALL_RADIUS) / 200);
     ctx.translate(x, groundY + 3);
@@ -106,7 +102,6 @@ const FootballGame = () => {
     ctx.translate(x, y);
     ctx.rotate(rotation);
 
-    // Ball body
     ctx.beginPath();
     ctx.arc(0, 0, BALL_RADIUS, 0, Math.PI * 2);
     const ballGrad = ctx.createRadialGradient(-6, -8, 3, 2, 2, BALL_RADIUS);
@@ -120,7 +115,6 @@ const FootballGame = () => {
     ctx.lineWidth = 0.8;
     ctx.stroke();
 
-    // Pentagons
     const drawPentagon = (cx: number, cy: number, size: number) => {
       ctx.beginPath();
       for (let j = 0; j < 5; j++) {
@@ -144,7 +138,6 @@ const FootballGame = () => {
       drawPentagon(Math.cos(angle) * outerR, Math.sin(angle) * outerR, 6);
     }
 
-    // Connecting lines
     ctx.strokeStyle = "#aaa";
     ctx.lineWidth = 0.6;
     for (let i = 0; i < 5; i++) {
@@ -163,7 +156,6 @@ const FootballGame = () => {
       ctx.stroke();
     }
 
-    // Shine
     ctx.beginPath();
     ctx.arc(-7, -9, 5, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255,255,255,0.6)";
@@ -174,6 +166,21 @@ const FootballGame = () => {
     ctx.fill();
 
     ctx.restore();
+  }, []);
+
+  const endGame = useCallback(() => {
+    const ball = ballRef.current;
+    ball.active = false;
+    ball.onGround = true;
+    const finalScore = scoreRef.current;
+    setGameOver(true);
+    setStarted(false);
+
+    if (finalScore > highScoreRef.current()) {
+      highScoreRef.current = () => finalScore;
+      setHighScore(finalScore);
+      localStorage.setItem("footballHighScore", String(finalScore));
+    }
   }, []);
 
   const animate = useCallback(() => {
@@ -188,7 +195,7 @@ const FootballGame = () => {
     const ball = ballRef.current;
     const groundY = h * GROUND_RATIO;
     const floorY = groundY - BALL_RADIUS;
-    const ceilingY = BALL_RADIUS; // top boundary
+    const ceilingY = BALL_RADIUS;
     const now = performance.now();
 
     ctx.save();
@@ -197,25 +204,22 @@ const FootballGame = () => {
 
     drawScene(ctx, w, h, now);
 
-    if (ball.bouncing) {
+    if (ball.active) {
       ball.vy += GRAVITY;
       ball.x += ball.vx;
       ball.y += ball.vy;
       ball.vx *= FRICTION;
       ball.rotation += ball.vx * 0.04;
 
-      // Ground bounce
+      // Ball hits ground = GAME OVER
       if (ball.y >= floorY) {
         ball.y = floorY;
-        ball.vy = -Math.abs(ball.vy) * BOUNCE_DAMPING;
-        // If almost stopped, just sit on ground — NO auto re-launch
-        if (Math.abs(ball.vy) < 1.5) {
-          ball.vy = 0;
-          ball.vx *= 0.9;
-        }
+        ball.vy = 0;
+        ball.vx = 0;
+        endGame();
       }
 
-      // Ceiling clamp — never go above canvas
+      // Ceiling clamp
       if (ball.y < ceilingY) {
         ball.y = ceilingY;
         ball.vy = Math.abs(ball.vy) * 0.5;
@@ -228,31 +232,33 @@ const FootballGame = () => {
 
     drawBall(ctx, ball.x, ball.y, ball.rotation, groundY);
 
-    // Score
-    if (ball.bouncing) {
+    // Score display
+    if (ball.active || gameOver) {
       ctx.fillStyle = "rgba(255,255,255,0.95)";
-      ctx.font = "bold 42px 'Bebas Neue', sans-serif";
+      ctx.font = "bold 48px 'Bebas Neue', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(String(scoreRef.current), w / 2, 50);
+      ctx.fillText(String(scoreRef.current), w / 2, 55);
       ctx.font = "14px 'Barlow', sans-serif";
       ctx.fillStyle = "rgba(255,255,255,0.5)";
-      ctx.fillText("SKOR", w / 2, 68);
+      ctx.fillText("SKOR", w / 2, 73);
     }
 
-    // Click prompt
-    if (!ball.bouncing) {
+    // Start prompt
+    if (!ball.active && !gameOver) {
       const pulse = 0.8 + Math.sin(now * 0.004) * 0.2;
       ctx.globalAlpha = pulse;
       ctx.fillStyle = "#fff";
-      ctx.font = "bold 18px 'Bebas Neue', sans-serif";
+      ctx.font = "bold 20px 'Bebas Neue', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("⚽  TOPA TIKLA!", ball.x, ball.y - BALL_RADIUS - 20);
+      ctx.fillText("⚽  TOPA TIKLA VE HAVADA TUT!", w / 2, ball.y - BALL_RADIUS - 25);
+      ctx.font = "13px 'Barlow', sans-serif";
+      ctx.fillText("Yere düşürme!", w / 2, ball.y - BALL_RADIUS - 8);
       ctx.globalAlpha = 1;
     }
 
     ctx.restore();
     animRef.current = requestAnimationFrame(animate);
-  }, [drawScene, drawBall]);
+  }, [drawScene, drawBall, endGame, gameOver]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -273,7 +279,7 @@ const FootballGame = () => {
       initGrass(displayW);
 
       const ball = ballRef.current;
-      if (!ball.bouncing) {
+      if (!ball.active) {
         ball.x = displayW / 2;
         ball.y = CANVAS_H * GROUND_RATIO - BALL_RADIUS;
       }
@@ -298,25 +304,40 @@ const FootballGame = () => {
     const ball = ballRef.current;
     const dist = Math.sqrt((x - ball.x) ** 2 + (y - ball.y) ** 2);
 
-    if (dist < BALL_RADIUS + 20) {
-      if (!ball.bouncing) {
-        ball.bouncing = true;
-        setBouncing(true);
+    // If game over, restart on any click
+    if (gameOver) {
+      setGameOver(false);
+      scoreRef.current = 0;
+      setScore(0);
+      ball.x = canvas.width / (window.devicePixelRatio || 1) / 2;
+      ball.y = CANVAS_H * GROUND_RATIO - BALL_RADIUS;
+      ball.vx = 0;
+      ball.vy = 0;
+      ball.rotation = 0;
+      ball.onGround = true;
+      return;
+    }
+
+    if (dist < BALL_RADIUS + 25) {
+      if (!ball.active) {
+        // First kick - launch the ball
+        ball.active = true;
+        ball.onGround = false;
+        setStarted(true);
+        setGameOver(false);
         scoreRef.current = 0;
         setScore(0);
       }
+
       scoreRef.current += 1;
       setScore(scoreRef.current);
 
-      const angle = Math.atan2(ball.y - y, ball.x - x);
-      const power = 6 + Math.random() * 3;
-      ball.vx += Math.cos(angle) * power * 0.5;
-      // Limit upward velocity so ball stays in canvas
-      ball.vy = Math.max(-(CANVAS_H * GROUND_RATIO * 0.7) / 20, -(8 + Math.random() * 4));
-    } else if (ball.bouncing) {
+      // Kick upward with slight direction
       const angle = Math.atan2(ball.y - y, ball.x - x);
       ball.vx += Math.cos(angle) * 3;
-      ball.vy -= 2;
+      ball.vy = -(7 + Math.random() * 3); // Always kick up
+      // Clamp max upward velocity
+      if (ball.vy < -14) ball.vy = -14;
     }
   };
 
@@ -328,9 +349,30 @@ const FootballGame = () => {
           onClick={handleClick}
           className="w-full cursor-pointer block"
         />
-        {bouncing && (
-          <div className="absolute top-3 right-4 bg-black/40 backdrop-blur-sm rounded-lg px-4 py-2">
-            <p className="text-white font-display text-2xl">{score} <span className="text-sm text-white/60">vuruş</span></p>
+        {/* HUD overlay */}
+        <div className="absolute top-3 right-4 flex items-center gap-3">
+          <div className="bg-black/40 backdrop-blur-sm rounded-lg px-3 py-1.5 flex items-center gap-2">
+            <span className="text-yellow-400 text-xs font-semibold">🏆</span>
+            <span className="text-white font-display text-lg">{highScore}</span>
+          </div>
+          {started && (
+            <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-1.5">
+              <p className="text-white font-display text-2xl">{score} <span className="text-sm text-white/60">vuruş</span></p>
+            </div>
+          )}
+        </div>
+
+        {/* Game over overlay */}
+        {gameOver && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="text-center">
+              <p className="font-display text-5xl text-white mb-2">OYUN BİTTİ!</p>
+              <p className="font-display text-3xl text-primary">{scoreRef.current} VURUŞ</p>
+              {scoreRef.current >= highScore && scoreRef.current > 0 && (
+                <p className="text-yellow-400 font-semibold mt-1 text-sm">🏆 YENİ REKOR!</p>
+              )}
+              <p className="text-white/60 text-sm mt-4">Tekrar oynamak için tıkla</p>
+            </div>
           </div>
         )}
       </div>
