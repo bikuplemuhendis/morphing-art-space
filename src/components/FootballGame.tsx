@@ -88,6 +88,7 @@ const FootballGame = () => {
   }, []);
 
   const drawBall = useCallback((ctx: CanvasRenderingContext2D, x: number, y: number, rotation: number, groundY: number) => {
+    // Shadow
     ctx.save();
     const shadowScale = Math.max(0.3, 1 - (groundY - y - BALL_RADIUS) / 200);
     ctx.translate(x, groundY + 3);
@@ -102,67 +103,100 @@ const FootballGame = () => {
     ctx.translate(x, y);
     ctx.rotate(rotation);
 
+    const R = BALL_RADIUS;
+
+    // Base ball body
     ctx.beginPath();
-    ctx.arc(0, 0, BALL_RADIUS, 0, Math.PI * 2);
-    const ballGrad = ctx.createRadialGradient(-6, -8, 3, 2, 2, BALL_RADIUS);
+    ctx.arc(0, 0, R, 0, Math.PI * 2);
+    const ballGrad = ctx.createRadialGradient(-R * 0.25, -R * 0.3, R * 0.08, 0, 0, R);
     ballGrad.addColorStop(0, "#ffffff");
-    ballGrad.addColorStop(0.4, "#f5f5f5");
-    ballGrad.addColorStop(0.8, "#e0e0e0");
-    ballGrad.addColorStop(1, "#bdbdbd");
+    ballGrad.addColorStop(0.3, "#f8f8f8");
+    ballGrad.addColorStop(0.65, "#ececec");
+    ballGrad.addColorStop(1, "#c4c4c4");
     ctx.fillStyle = ballGrad;
     ctx.fill();
-    ctx.strokeStyle = "#9e9e9e";
+
+    // Clip to ball circle
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(0, 0, R, 0, Math.PI * 2);
+    ctx.clip();
+
+    // Modern thermal-bonded panels (like Adidas Al Rihla / Nike Flight)
+    const panelColors = ["#C8102E", "#1a1a2e", "#C8102E", "#1a1a2e", "#C8102E", "#1a1a2e"];
+    for (let i = 0; i < 6; i++) {
+      const angle = (Math.PI * 2 * i) / 6;
+      ctx.beginPath();
+      const a1 = angle - 0.42;
+      const a2 = angle + 0.42;
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(
+        Math.cos(a1) * R * 1.1, Math.sin(a1) * R * 1.1,
+        Math.cos(angle - 0.22) * R, Math.sin(angle - 0.22) * R
+      );
+      ctx.lineTo(Math.cos(angle + 0.22) * R, Math.sin(angle + 0.22) * R);
+      ctx.quadraticCurveTo(
+        Math.cos(a2) * R * 1.1, Math.sin(a2) * R * 1.1,
+        0, 0
+      );
+      ctx.closePath();
+      ctx.fillStyle = panelColors[i];
+      ctx.globalAlpha = 0.65;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // Panel seams — gold metallic
+    ctx.strokeStyle = "rgba(218, 165, 32, 0.55)";
+    ctx.lineWidth = 1.2;
+    for (let i = 0; i < 6; i++) {
+      const angle = (Math.PI * 2 * i) / 6;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      const cpX = Math.cos(angle + 0.12) * R * 0.6;
+      const cpY = Math.sin(angle + 0.12) * R * 0.6;
+      ctx.quadraticCurveTo(cpX, cpY, Math.cos(angle) * R, Math.sin(angle) * R);
+      ctx.stroke();
+    }
+
+    // Outer ring seam
+    ctx.beginPath();
+    ctx.arc(0, 0, R * 0.72, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(218, 165, 32, 0.25)";
     ctx.lineWidth = 0.8;
     ctx.stroke();
 
-    const drawPentagon = (cx: number, cy: number, size: number) => {
-      ctx.beginPath();
-      for (let j = 0; j < 5; j++) {
-        const a = (Math.PI * 2 * j) / 5 - Math.PI / 2;
-        const px = cx + Math.cos(a) * size;
-        const py = cy + Math.sin(a) * size;
-        if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.closePath();
-      ctx.fillStyle = "#1a1a1a";
-      ctx.fill();
-      ctx.strokeStyle = "#333";
-      ctx.lineWidth = 0.5;
-      ctx.stroke();
-    };
-
-    drawPentagon(0, 0, 8);
-    const outerR = 17;
-    for (let i = 0; i < 5; i++) {
-      const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
-      drawPentagon(Math.cos(angle) * outerR, Math.sin(angle) * outerR, 6);
-    }
-
-    ctx.strokeStyle = "#aaa";
-    ctx.lineWidth = 0.6;
-    for (let i = 0; i < 5; i++) {
-      const a1 = (Math.PI * 2 * i) / 5 - Math.PI / 2;
-      const a2 = (Math.PI * 2 * ((i + 1) % 5)) / 5 - Math.PI / 2;
-      ctx.beginPath();
-      ctx.moveTo(Math.cos(a1) * 8, Math.sin(a1) * 8);
-      ctx.lineTo(Math.cos(a1) * outerR, Math.sin(a1) * outerR);
-      ctx.stroke();
-      const ox = Math.cos(a1) * outerR, oy = Math.sin(a1) * outerR;
-      const ox2 = Math.cos(a2) * outerR, oy2 = Math.sin(a2) * outerR;
-      ctx.beginPath();
-      ctx.moveTo(ox, oy);
-      ctx.lineTo((ox + ox2) / 2 * 1.15, (oy + oy2) / 2 * 1.15);
-      ctx.lineTo(ox2, oy2);
-      ctx.stroke();
-    }
-
+    // Center accent circle
     ctx.beginPath();
-    ctx.arc(-7, -9, 5, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.arc(0, 0, R * 0.16, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(200, 16, 46, 0.45)";
     ctx.fill();
+    ctx.strokeStyle = "rgba(218, 165, 32, 0.6)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    ctx.restore(); // unclip
+
+    // Ball outline
     ctx.beginPath();
-    ctx.arc(-4, -6, 2, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.arc(0, 0, R, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(80,80,80,0.3)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    // Specular highlight
+    ctx.beginPath();
+    ctx.arc(-R * 0.28, -R * 0.32, R * 0.2, 0, Math.PI * 2);
+    const specGrad = ctx.createRadialGradient(-R * 0.28, -R * 0.32, 0, -R * 0.28, -R * 0.32, R * 0.2);
+    specGrad.addColorStop(0, "rgba(255,255,255,0.75)");
+    specGrad.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = specGrad;
+    ctx.fill();
+
+    // Small sharp highlight
+    ctx.beginPath();
+    ctx.arc(-R * 0.15, -R * 0.2, R * 0.06, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.95)";
     ctx.fill();
 
     ctx.restore();
