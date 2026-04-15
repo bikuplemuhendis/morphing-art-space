@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, Phone, Search, ShoppingCart, User, ChevronDown, Shirt, Trophy, Palette, Star, ArrowRight, Shield, Volleyball, Award } from "lucide-react";
+import { Menu, X, Phone, Search, ShoppingCart, User, ChevronDown, Shirt, Trophy, Palette, Star, ArrowRight, Shield, Volleyball, Award, Mail } from "lucide-react";
+import { SiWhatsapp, SiFacebook, SiInstagram } from "react-icons/si";
 import { useCart } from "@/context/CartContext";
 import { Link } from "react-router-dom";
 
