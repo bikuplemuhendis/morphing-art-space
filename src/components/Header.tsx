@@ -47,7 +47,7 @@ const megaMenuData: Record<string, MegaMenuEntry> = {
         links: [
           { label: "Kendi Formani Tasarla", href: "/tasarla" },
           { label: "Logo & Baskı Hizmeti", href: "/tasarla" },
-          { label: "Toplu Sipariş", href: "/tasarla" },
+          { label: "Fiyat Hesapla", href: "/toplu-siparis" },
         ],
         icon: Palette,
       },
@@ -107,7 +107,7 @@ const navLinks = [
   { label: "KALECİ", href: "/magaza/kaleci" },
   { label: "AKSESUAR", href: "/magaza/aksesuar" },
   { label: "TASARLA", href: "/tasarla" },
-  { label: "TOPLU SİPARİŞ", href: "/toplu-siparis", highlight: true },
+  { label: "FİYAT HESAPLA", href: "/toplu-siparis", highlight: true },
 ];
 
 const Header = () => {
