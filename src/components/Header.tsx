@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { Menu, X, Phone, Search, ShoppingCart, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useCart } from "@/context/CartContext";
+import { Link } from "react-router-dom";
 
 const navLinks = [
   { label: "ANA SAYFA", href: "/" },
-  { label: "FUTBOL", href: "/#futbol" },
-  { label: "BASKETBOL", href: "/#basketbol" },
-  { label: "VOLEYBOL", href: "/#voleybol" },
+  { label: "MAĞAZA", href: "/magaza" },
+  { label: "FUTBOL", href: "/magaza/futbol" },
+  { label: "BASKETBOL", href: "/magaza/basketbol" },
   { label: "HAKKIMIZDA", href: "/hakkimizda" },
   { label: "İLETİŞİM", href: "/iletisim" },
 ];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { totalItems } = useCart();
 
   return (
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
@@ -29,20 +31,20 @@ const Header = () => {
 
       {/* Main nav */}
       <div className="container mx-auto flex items-center justify-between py-3 px-4">
-        <a href="#" className="font-display text-3xl tracking-wider text-foreground">
+        <Link to="/" className="font-display text-3xl tracking-wider text-foreground">
           EGEMEN<span className="text-primary"> SPOR</span>
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <nav className="hidden lg:flex items-center gap-6">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
-              href={link.href}
+              to={link.href}
               className="font-display text-lg tracking-wide text-foreground hover:text-primary transition-colors"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -54,12 +56,12 @@ const Header = () => {
           <button className="p-2 text-foreground hover:text-primary transition-colors">
             <User className="w-5 h-5" />
           </button>
-          <button className="p-2 text-foreground hover:text-primary transition-colors relative">
+          <Link to="/sepet" className="p-2 text-foreground hover:text-primary transition-colors relative">
             <ShoppingCart className="w-5 h-5" />
             <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
-              0
+              {totalItems}
             </span>
-          </button>
+          </Link>
           <button
             className="lg:hidden p-2 text-foreground"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -74,14 +76,14 @@ const Header = () => {
         <div className="lg:hidden border-t border-border bg-card">
           <nav className="container mx-auto py-4 px-4 flex flex-col gap-3">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
-                href={link.href}
+                to={link.href}
                 className="font-display text-xl tracking-wide text-foreground hover:text-primary transition-colors py-1"
                 onClick={() => setMenuOpen(false)}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>

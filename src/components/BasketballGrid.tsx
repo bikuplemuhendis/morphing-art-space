@@ -1,11 +1,8 @@
 import ProductCard from "./ProductCard";
+import { products } from "@/data/products";
+import { Link } from "react-router-dom";
 
-const products = [
-  { image: "/images/jersey-orange.png", name: "Turuncu Basketbol Forması", originalPrice: 600, salePrice: 290, discount: 50 },
-  { image: "/images/jersey-blue.png", name: "Mavi Beyaz Basketbol Forması", originalPrice: 600, salePrice: 290, discount: 50 },
-  { image: "/images/jersey-black.png", name: "Siyah Gold Basketbol Forması", originalPrice: 600, salePrice: 310, discount: 48 },
-  { image: "/images/jersey-red.png", name: "Kırmızı Basketbol Forması", originalPrice: 600, salePrice: 290, discount: 50 },
-];
+const basketballProducts = products.filter((p) => p.category === "basketbol");
 
 const BasketballGrid = () => {
   return (
@@ -15,13 +12,15 @@ const BasketballGrid = () => {
           <h2 className="font-display text-4xl text-foreground">BASKETBOL FORMALARI</h2>
           <p className="text-muted-foreground mt-1">Takımınız için profesyonel basketbol formaları</p>
         </div>
-        <a href="#" className="text-primary font-semibold hover:underline text-sm">
+        <Link to="/magaza/basketbol" className="text-primary font-semibold hover:underline text-sm">
           Tümünü Gör →
-        </a>
+        </Link>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {products.map((product, i) => (
-          <ProductCard key={i} {...product} />
+        {basketballProducts.map((product) => (
+          <Link key={product.id} to={`/urun/${product.id}`}>
+            <ProductCard {...product} />
+          </Link>
         ))}
       </div>
     </section>
