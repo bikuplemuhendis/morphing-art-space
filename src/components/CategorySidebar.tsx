@@ -1,17 +1,62 @@
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { Shirt, Trophy, Volleyball, Shield, Users, Palette, Package, ChevronDown, ChevronRight, LayoutGrid } from "lucide-react";
+import { ChevronDown, ChevronRight, Palette } from "lucide-react";
 import { useState } from "react";
 import { products, getClubs } from "@/data/products";
 import { cn } from "@/lib/utils";
 
-const categories = [
-  { key: "all", label: "Tüm Ürünler", icon: LayoutGrid, href: "/magaza" },
-  { key: "futbol", label: "Futbol Formaları", icon: Shirt, href: "/magaza/futbol" },
-  { key: "basketbol", label: "Basketbol Formaları", icon: Trophy, href: "/magaza/basketbol" },
-  { key: "voleybol", label: "Voleybol Formaları", icon: Volleyball, href: "/magaza/voleybol" },
-  { key: "kaleci", label: "Kaleci Formaları", icon: Shield, href: "/magaza/kaleci" },
-  { key: "kulupler", label: "Kulüp Formaları", icon: Users, href: "/magaza/kulupler", hasChildren: true },
-  { key: "aksesuar", label: "Aksesuarlar", icon: Package, href: "/magaza/aksesuar" },
+const categoryTree = [
+  {
+    key: "basketbol",
+    label: "BASKETBOL",
+    href: "/magaza/basketbol",
+  },
+  {
+    key: "all",
+    label: "BÜTÜN ÜRÜNLER",
+    href: "/magaza",
+  },
+  {
+    key: "futbol",
+    label: "FUTBOL",
+    href: "/magaza/futbol",
+    children: [
+      { label: "Futbol Formaları", href: "/magaza/futbol" },
+      { label: "Futbol Şortları", href: "/magaza/aksesuar" },
+      { label: "Çorap / Tozluk", href: "/magaza/aksesuar" },
+      { label: "Kaptanlık Pazubantları", href: "/magaza/aksesuar" },
+      { label: "Tekmelik", href: "/magaza/aksesuar" },
+    ],
+  },
+  {
+    key: "kaleci",
+    label: "KALECİ ÜRÜNLERİ",
+    href: "/magaza/kaleci",
+  },
+  {
+    key: "kulupler",
+    label: "KULÜPLER",
+    href: "/magaza/kulupler",
+    children: "clubs",
+  },
+  {
+    key: "voleybol",
+    label: "VOLEYBOL",
+    href: "/magaza/voleybol",
+  },
+  {
+    key: "aksesuar",
+    label: "SPOR AKSESUARLARI",
+    href: "/magaza/aksesuar",
+  },
+];
+
+const productTags = [
+  "Halı Saha", "Futbol Forması", "Basketbol", "Voleybol",
+  "Kaleci Forması", "Dijital Forma", "Forma Tasarla",
+  "Kırmızı Siyah", "Sarı Siyah", "Mavi Beyaz",
+  "Siyah Beyaz", "Turuncu Beyaz", "Forma Sipariş",
+  "Halı Saha Çorap", "Halı Saha Şort", "Kaleci Eldiveni",
+  "Antrenman Yeleği", "Takım Yeleği",
 ];
 
 const CategorySidebar = () => {
@@ -19,19 +64,30 @@ const CategorySidebar = () => {
   const [searchParams] = useSearchParams();
   const clubFilter = searchParams.get("club");
   const activeCategory = category || "all";
-  const [clubsOpen, setClubsOpen] = useState(activeCategory === "kulupler");
+  const [expanded, setExpanded] = useState<string | null>(
+    activeCategory === "futbol" ? "futbol" : activeCategory === "kulupler" ? "kulupler" : null
+  );
   const clubs = getClubs();
 
+  // Get 5 newest (last added) products for "Yeni Ürünler"
+  const newProducts = [...products].reverse().slice(0, 5);
+
+  const toggleExpand = (key: string) => {
+    setExpanded(expanded === key ? null : key);
+  };
+
   return (
-    <aside className="w-full lg:w-64 shrink-0">
-      <div className="bg-card border border-border rounded-xl p-4 sticky top-4">
-        <h3 className="font-display text-xl text-foreground mb-4 px-2">KATEGORİLER</h3>
-        <nav className="flex flex-col gap-1">
-          {categories.map((cat) => {
+    <aside className="w-full lg:w-72 shrink-0 space-y-6">
+      {/* Categories */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden sticky top-20">
+        <div className="bg-secondary px-5 py-3 border-b border-border">
+          <h3 className="font-display text-lg text-foreground tracking-wide">KATEGORİLER</h3>
+        </div>
+        <nav className="p-3 flex flex-col gap-0.5">
+          {categoryTree.map((cat) => {
             const isActive = activeCategory === cat.key && !clubFilter;
-            const count = cat.key === "all"
-              ? products.length
-              : products.filter(p => p.category === cat.key).length;
+            const hasChildren = cat.children;
+            const isExpanded = expanded === cat.key;
 
             return (
               <div key={cat.key}>
@@ -39,53 +95,55 @@ const CategorySidebar = () => {
                   <Link
                     to={cat.href}
                     className={cn(
-                      "flex-1 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+                      "flex-1 px-3 py-2 text-sm font-medium transition-all rounded-lg",
                       isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        ? "text-primary font-semibold"
+                        : "text-foreground hover:text-primary"
                     )}
                   >
-                    <cat.icon className="w-4 h-4 shrink-0" />
-                    <span className="flex-1">{cat.label}</span>
-                    <span className={cn(
-                      "text-xs rounded-full px-2 py-0.5",
-                      isActive ? "bg-primary-foreground/20 text-primary-foreground" : "bg-secondary text-muted-foreground"
-                    )}>
-                      {count}
-                    </span>
+                    {cat.label}
                   </Link>
-                  {cat.hasChildren && (
+                  {hasChildren && (
                     <button
-                      onClick={() => setClubsOpen(!clubsOpen)}
-                      className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+                      onClick={() => toggleExpand(cat.key)}
+                      className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      {clubsOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                      {isExpanded ? (
+                        <ChevronDown className="w-4 h-4" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4" />
+                      )}
                     </button>
                   )}
                 </div>
 
-                {/* Club sub-items */}
-                {cat.hasChildren && clubsOpen && (
-                  <div className="ml-4 mt-1 flex flex-col gap-0.5 border-l-2 border-border pl-3">
-                    {clubs.map((club) => {
-                      const isClubActive = clubFilter === club;
-                      const clubCount = products.filter(p => p.club === club).length;
-                      return (
-                        <Link
-                          key={club}
-                          to={`/magaza/kulupler?club=${encodeURIComponent(club)}`}
-                          className={cn(
-                            "flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
-                            isClubActive
-                              ? "bg-primary/10 text-primary font-semibold"
-                              : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                          )}
-                        >
-                          <span>{club}</span>
-                          <span className="text-xs">{clubCount}</span>
-                        </Link>
-                      );
-                    })}
+                {/* Subcategories */}
+                {hasChildren && isExpanded && (
+                  <div className="ml-3 border-l-2 border-primary/20 pl-3 mb-1 flex flex-col gap-0.5">
+                    {cat.children === "clubs"
+                      ? clubs.map((club) => (
+                          <Link
+                            key={club}
+                            to={`/magaza/kulupler?club=${encodeURIComponent(club)}`}
+                            className={cn(
+                              "px-3 py-1.5 text-sm rounded-md transition-all",
+                              clubFilter === club
+                                ? "text-primary font-semibold bg-primary/5"
+                                : "text-muted-foreground hover:text-primary hover:bg-secondary"
+                            )}
+                          >
+                            {club}
+                          </Link>
+                        ))
+                      : (cat.children as { label: string; href: string }[]).map((child, i) => (
+                          <Link
+                            key={i}
+                            to={child.href}
+                            className="px-3 py-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-secondary rounded-md transition-all"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
                   </div>
                 )}
               </div>
@@ -94,14 +152,70 @@ const CategorySidebar = () => {
         </nav>
 
         {/* Design CTA */}
-        <div className="mt-6 border-t border-border pt-4">
+        <div className="p-3 border-t border-border">
           <Link
             to="/tasarla"
-            className="flex items-center gap-3 px-3 py-3 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all font-semibold text-sm"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all font-semibold text-sm"
           >
             <Palette className="w-5 h-5" />
-            <span>Kendi Formani Tasarla</span>
+            <span>Kendi Formanı Tasarla</span>
           </Link>
+        </div>
+      </div>
+
+      {/* New Products */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="bg-secondary px-5 py-3 border-b border-border">
+          <h3 className="font-display text-lg text-foreground tracking-wide">YENİ ÜRÜNLER</h3>
+        </div>
+        <div className="p-3 flex flex-col gap-3">
+          {newProducts.map((product) => (
+            <Link
+              key={product.id}
+              to={`/urun/${product.id}`}
+              className="flex items-center gap-3 group hover:bg-secondary rounded-lg p-2 transition-colors"
+            >
+              <div className="w-16 h-16 rounded-lg overflow-hidden bg-secondary shrink-0 border border-border">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                  {product.name}
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs text-muted-foreground line-through">
+                    {product.originalPrice.toFixed(2)}₺
+                  </span>
+                  <span className="text-sm font-bold text-primary">
+                    {product.salePrice.toFixed(2)}₺
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Product Tags */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="bg-secondary px-5 py-3 border-b border-border">
+          <h3 className="font-display text-lg text-foreground tracking-wide">ÜRÜN ETİKETLERİ</h3>
+        </div>
+        <div className="p-4 flex flex-wrap gap-2">
+          {productTags.map((tag) => (
+            <Link
+              key={tag}
+              to={`/magaza?q=${encodeURIComponent(tag)}`}
+              className="px-3 py-1.5 text-xs border border-border rounded-full text-muted-foreground hover:text-primary hover:border-primary transition-all"
+            >
+              {tag}
+            </Link>
+          ))}
         </div>
       </div>
     </aside>
