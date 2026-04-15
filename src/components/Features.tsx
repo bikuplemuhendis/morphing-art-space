@@ -1,8 +1,8 @@
-import { Truck, RotateCcw, Headphones, Shield } from "lucide-react";
+import { Truck, Headphones, Shield, Palette } from "lucide-react";
 
 const features = [
-  { icon: Truck, title: "Ücretsiz Kargo", desc: "500₺ üzeri siparişlerde" },
-  { icon: RotateCcw, title: "Kolay İade", desc: "14 gün içinde iade" },
+  { icon: Truck, title: "Hızlı Kargo", desc: "Siparişleriniz hızlıca kapınızda" },
+  { icon: Palette, title: "Özel Tasarım", desc: "İsim, numara ve logo baskısı" },
   { icon: Headphones, title: "7/24 Destek", desc: "WhatsApp ile ulaşın" },
   { icon: Shield, title: "Güvenli Ödeme", desc: "256-bit SSL şifreleme" },
 ];
