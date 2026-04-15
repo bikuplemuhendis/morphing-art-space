@@ -197,8 +197,8 @@ const ProductDetail = () => {
             {/* Trust badges */}
             <div className="grid grid-cols-3 gap-3 pt-2">
               {[
-                { icon: Truck, label: "Hızlı Kargo" },
-                { icon: Shield, label: "Güvenli Ödeme" },
+                { icon: Truck, label: "Kapıda Ödeme" },
+                { icon: Shield, label: "Kaliteli İşçilik" },
                 { icon: Headphones, label: "7/24 Destek" },
               ].map((b, i) => (
                 <div key={i} className="flex flex-col items-center text-center gap-1 p-2 bg-secondary rounded-lg">

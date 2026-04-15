@@ -1,10 +1,10 @@
-import { Truck, Headphones, Shield, Palette } from "lucide-react";
+import { Truck, Headphones, Award, Clock } from "lucide-react";
 
 const features = [
-  { icon: Truck, title: "Hızlı Kargo", desc: "Siparişleriniz hızlıca kapınızda" },
-  { icon: Palette, title: "Özel Tasarım", desc: "İsim, numara ve logo baskısı" },
-  { icon: Headphones, title: "7/24 Destek", desc: "WhatsApp ile ulaşın" },
-  { icon: Shield, title: "Güvenli Ödeme", desc: "256-bit SSL şifreleme" },
+  { icon: Truck, title: "Kapıda Ödeme Kargo", desc: "Kapıda nakit veya kartla ödeme imkanı" },
+  { icon: Award, title: "Kaliteli İşçilik", desc: "Profesyonel sublimation baskı teknolojisi" },
+  { icon: Clock, title: "3 İş Gününde Teslimat", desc: "Hızlı üretim ve kargo süreci" },
+  { icon: Headphones, title: "7/24 Müşteri Desteği", desc: "WhatsApp ile her zaman ulaşın" },
 ];
 
 const Features = () => {
